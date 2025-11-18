@@ -22,23 +22,28 @@ Backend base do Gespro, inicializada com Spring Boot 3.5.7, Spring Modulith 1.4.
 - Permissões de execução para o wrapper: `chmod +x mvnw`.
 
 ## Como executar
-1. Instale as dependências e compile:
+1. Entre no diretório do backend Maven:
    ```bash
-   ./mvnw -q -DskipTests package
+   cd backend
    ```
-2. Suba a aplicação:
+2. Instale as dependências e compile todos os módulos:
    ```bash
-   ./mvnw spring-boot:run
+   ./mvnw -q -DskipTests install
    ```
-3. Valide o health check:
+3. Suba a aplicação (módulo `platform/application-bootstrap`):
+   ```bash
+   ./mvnw -pl platform/application-bootstrap spring-boot:run
+   ```
+4. Valide o health check:
    ```bash
    curl http://localhost:8080/actuator/health
    ```
 
 ## Estrutura atual
-- `pom.xml` – POM pai com gestão de versões, dependências e plugins.
-- `src/main/java/com/xavier/gesproapi` – bootstrap `GesproApiApplication`.
-- `src/main/resources` – `application.properties`, templates e assets estáticos.
+- `backend/pom.xml` – POM pai multi-módulo (modules/ + platform/).
+- `backend/modules/*-module` – módulos de domínio por bounded context (crm-clientes, finance-accounting, shared-kernel, etc.).
+- `backend/platform/application-bootstrap` – aplicação Spring Boot Modulith que orquestra todos os módulos.
+- `backend/platform/integration-tests` – suíte de testes de integração ponta a ponta.
 - `docs/` – referências complementares (Spring Modulith, visão geral do backend).
 
 ## Próximos passos sugeridos
