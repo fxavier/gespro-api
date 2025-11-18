@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: gespro-api
+  profiles:
+    default: dev
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://${GESPRO_DB_HOST:localhost}:${GESPRO_DB_PORT:5432}/${GESPRO_DB_NAME:gespro}
+    username: ${GESPRO_DB_USER:gespro}
+    password: ${GESPRO_DB_PASSWORD:gespro}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  sql:
+    init:
+      mode: never
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
