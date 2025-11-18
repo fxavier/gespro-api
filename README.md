@@ -26,15 +26,19 @@ Backend base do Gespro, inicializada com Spring Boot 3.5.7, Spring Modulith 1.4.
    ```bash
    cd backend
    ```
-2. Instale as dependências e compile todos os módulos:
+2. Suba o PostgreSQL local (imagem `postgres:16`) com o docker compose fornecido:
+   ```bash
+   docker compose up -d postgres
+   ```
+3. Instale as dependências e compile todos os módulos:
    ```bash
    ./mvnw -q -DskipTests install
    ```
-3. Suba a aplicação (módulo `platform/application-bootstrap`):
+4. Suba a aplicação (módulo `platform/application-bootstrap`):
    ```bash
    ./mvnw -pl platform/application-bootstrap spring-boot:run
    ```
-4. Valide o health check:
+5. Valide o health check:
    ```bash
    curl http://localhost:8080/actuator/health
    ```
@@ -45,6 +49,17 @@ Backend base do Gespro, inicializada com Spring Boot 3.5.7, Spring Modulith 1.4.
 - `backend/platform/application-bootstrap` – aplicação Spring Boot Modulith que orquestra todos os módulos.
 - `backend/platform/integration-tests` – suíte de testes de integração ponta a ponta.
 - `docs/` – referências complementares (Spring Modulith, visão geral do backend).
+
+## Banco de dados & Testcontainers
+- `backend/docker-compose.yml` provisiona PostgreSQL 16 com usuário/senha `gespro/gespro` (padrão). Os valores podem ser sobrepostos via variáveis `GESPRO_DB_*`.
+- `backend/.env` traz os valores default dessas variáveis para uso local (Docker Compose e Spring Boot leem automaticamente).
+- `application.yml` (em `platform/application-bootstrap`) define perfis `dev` e `test`. O perfil `dev` aponta para o container local e usa `spring.jpa.hibernate.ddl-auto=update` para criação automática de schema. O perfil `test` é preenchido dinamicamente pelos Testcontainers.
+- Testes de integração podem ser executados com Docker disponível via:
+  ```bash
+  cd backend
+  ./mvnw -pl platform/integration-tests -am test
+  ```
+  O módulo sobe um PostgreSQL 16 isolado via Testcontainers antes de carregar o contexto Spring Boot.
 
 ## Próximos passos sugeridos
 - Definir módulos Spring Modulith (por domínio) e boundaries explícitas.

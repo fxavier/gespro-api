@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: gespro-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${GESPRO_DB_NAME:-gespro}
+      POSTGRES_USER: ${GESPRO_DB_USER:-gespro}
+      POSTGRES_PASSWORD: ${GESPRO_DB_PASSWORD:-gespro}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${GESPRO_DB_USER:-gespro}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gespro-net
+
+volumes:
+  postgres-data:
+
+networks:
+  gespro-net:
+    driver: bridge
